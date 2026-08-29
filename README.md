@@ -1,17 +1,14 @@
-# datvi
+# @twobots/game-kit
 
 Shared non-visual logic for the [`twobots.dev`](https://twobots.dev) card-game lineup —
-a seeded bot-naming pool/picker, and feedback-sending primitives. Published to npm as
-**`@twobots/game-kit`**.
+a seeded bot-naming pool/picker, and feedback-sending primitives (byte-safe clamping, an
+offline retry queue, a send-outcome classifier). Ships raw source; consuming apps compile
+it with their own TypeScript pipeline.
 
-Sibling to [otso](https://github.com/bjornbasar/otso) (`@twobots/ui-theme`, the visual
-material) — split into a second package rather than folded into that one because neither
-of these belongs under a name that says "ui-theme": a bot-naming pool and a feedback
-retry queue are not visual material.
-
-Repo name **datvi** — Georgian for "bear," matching the workspace's authorship-naming
-convention (the repo/package split mirrors otso's: the repo carries the bear name, the
-npm package carries the consumer-facing name).
+Sibling to [`@twobots/ui-theme`](https://www.npmjs.com/package/@twobots/ui-theme) (the
+visual material) — split into a second package rather than folded into that one because
+neither of these belongs under a name that says "ui-theme": a bot-naming pool and a
+feedback retry queue are not visual material.
 
 ## What's in it, and what deliberately isn't
 
