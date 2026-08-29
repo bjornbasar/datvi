@@ -1,0 +1,52 @@
+name: Publish to npm
+
+# Tag-triggered, matching the fleet's own convention for its GitHub-side publish step
+# (a v* tag → the public registry). No Ruxa-side deploy at all — publishing to npm on
+# tag IS the whole release.
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm provenance
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      # Trusted Publishing (OIDC, no NPM_TOKEN) needs npm 11.5.1+; ubuntu-latest's
+      # bundled npm on a Node 22 image can lag behind that.
+      - run: npm install -g npm@latest
+
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      # The tag IS the version — refuse to publish a mismatch rather than let the two
+      # drift, the same failure mode a stale cache-buster or a stale doc causes elsewhere
+      # in this estate.
+      - name: Verify tag matches package.json version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PKG_VERSION="$(node -p "require('./package.json').version")"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::tag v$TAG_VERSION does not match package.json version $PKG_VERSION"
+            exit 1
+          fi
+
+      # No NODE_AUTH_TOKEN / NPM_TOKEN secret — this repo is registered as a Trusted
+      # Publisher on the npm package (npmjs.com → package → Settings → Trusted Publisher:
+      # provider GitHub Actions, repo bjornbasar/datvi, workflow npm-publish.yml). npm
+      # authenticates this run via the id-token above instead of a stored credential.
+      # That registration can only happen AFTER the package exists on npm, so v0.1.0 is
+      # published once by hand (`npm publish --access public` locally) to create it —
+      # every release after that goes through this workflow.
+      - run: npm publish --access public --provenance

@@ -1,0 +1,27 @@
+{
+  "name": "@twobots/game-kit",
+  "version": "0.1.0",
+  "description": "Shared non-visual logic for the twobots.dev card-game lineup — a seeded bot-naming pool/picker, and feedback-sending primitives (byte-safe clamping, an offline retry queue, a send-outcome classifier). Ships raw source; consuming apps compile it with their own TypeScript pipeline.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bjornbasar/datvi.git"
+  },
+  "files": [
+    "src"
+  ],
+  "exports": {
+    "./names": "./src/names/index.ts",
+    "./feedback": "./src/feedback/index.ts"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
