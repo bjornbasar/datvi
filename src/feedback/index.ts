@@ -4,7 +4,6 @@ export {
   MAX_ATTEMPTS,
   MAX_QUEUE_BYTES,
   createFeedbackQueue,
-  usableStorage,
   type FeedbackQueue,
   type QueuedReport,
 } from './queue.js'

@@ -1,28 +1,6 @@
 import { byteLength } from './bytes.js'
 import { sendReport, type Transport } from './transport.js'
-
-/**
- * Whether `Storage` will actually accept a write.
- *
- * A `Storage` reference can exist and still refuse every write — private browsing in
- * some engines, a full origin quota, a `localStorage` polyfill missing `setItem`. The
- * probe key is namespaced to this package and removed immediately, so it never
- * collides with anything a caller stores for real.
- */
-export function usableStorage(candidate: Storage | null | undefined): candidate is Storage {
-  if (candidate === null || candidate === undefined) return false
-  if (typeof candidate.setItem !== 'function' || typeof candidate.getItem !== 'function') {
-    return false
-  }
-  try {
-    const canary = '@twobots/game-kit.probe'
-    candidate.setItem(canary, '1')
-    candidate.removeItem(canary)
-    return true
-  } catch {
-    return false
-  }
-}
+import { usableStorage } from '../storage/storage.js'
 
 export interface QueuedReport<R> {
   readonly report: R
