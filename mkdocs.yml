@@ -1,0 +1,76 @@
+site_name: "@twobots/game-kit"
+site_description: Shared non-visual logic for the twobots.dev card-game lineup — bot naming, feedback primitives, storage primitives
+# Served under BOTH docs.twobots.dev/datvi/ and docs.bjornbasar.com/datvi/ from the same
+# container. The canonical must be the PUBLIC one: docs.bjornbasar.com sits behind Cloudflare
+# Access, so pointing search engines there would name a URL they can never fetch.
+#
+# The trailing path segment is load-bearing — mkdocs-material builds the canonical link and the
+# sitemap from this value, and a bare host here would advertise every page at the site root.
+site_url: https://docs.twobots.dev/datvi/
+repo_url: https://github.com/bjornbasar/datvi
+repo_name: bjornbasar/datvi
+copyright: MIT licensed
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - content.code.copy
+    - content.code.annotate
+    - search.highlight
+    - search.suggest
+    - toc.follow
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - API Reference:
+    - names: api/names.md
+    - feedback: api/feedback.md
+    - storage: api/storage.md
+
+# Turn link and anchor problems into warnings, which `--strict` then turns into a failed
+# build. Without this, a cross-reference to a renamed heading is only an INFO message and
+# ships broken. ci/deploy.sh runs `build --strict`.
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - def_list
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/bjornbasar/datvi
+    - icon: fontawesome/brands/npm
+      link: https://www.npmjs.com/package/@twobots/game-kit

@@ -1,0 +1,18 @@
+# Deploy compose — runs on Bosco (192.168.4.34, x86_64) at /data/datvi-docs.
+# The @twobots/game-kit API reference, Ayula-fronted at BOTH:
+#   https://docs.twobots.dev/datvi/       (public)
+#   https://docs.bjornbasar.com/datvi/    (Cloudflare Access)
+#
+# NOT on Hurska, unlike every other static site here. Hurska runs thirteen containers on
+# ~500 MB free; Bosco runs three on ~3 GB. Hurska is the static tier but is the least able
+# to absorb another one, and a docs page is the safest thing to put on a WiFi host — brief
+# unreachability is not an incident, which is why the apps stay where they are.
+#
+# Bosco's ports:  5180 mishka-app · 8101 datvi-docs
+services:
+  datvi-docs:
+    image: 192.168.4.9:5000/datvi-docs:latest
+    container_name: datvi-docs
+    ports:
+      - "8101:80"
+    restart: unless-stopped

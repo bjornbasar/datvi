@@ -22,7 +22,8 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "docs-check": "node tools/check-docs.mjs"
   },
   "devDependencies": {
     "typescript": "^5.9.3",

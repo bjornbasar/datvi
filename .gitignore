@@ -1,2 +1,5 @@
 node_modules/
 *.log
+
+# Rendered MkDocs output — built by ci/deploy.sh, never committed.
+site/
