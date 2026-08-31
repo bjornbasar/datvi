@@ -22,9 +22,26 @@ longest, most considered notes are exactly the ones rejected for size.
 | `MAX_CONTACT_BYTES` | `150` | Optional contact detail. |
 | `MAX_BODY_BYTES` | `65536` | The whole request body. |
 
-These are **shared backend constraints, not per-app tuning**: every twobots.dev game posts through
-the same wojtek endpoint, which enforces the same limits whichever game is reporting. Change them
-here only when that endpoint changes.
+These are **not the server's limits** — they sit deliberately *under* them, in a different unit.
+`POST /karu/feedback` on wojtek, which every twobots.dev game posts to, validates
+`String.length` and allows a 4000-character note, a 200-character contact and a 192 KB body.
+
+| | here (client) | wojtek (server) |
+|---|---|---|
+| note | 3000 **bytes** | 4000 **characters** |
+| contact | 150 bytes | 200 characters |
+| body | 65536 bytes | 196608 bytes |
+
+A UTF-8 byte cap of 3000 guarantees at most 3000 characters, so a client-legal note is always
+server-legal. The conservative direction is the whole point: the client's job is to make a
+rejection impossible, not to reproduce the server's arithmetic.
+
+Clamping in bytes here is also the only correct choice, because the limit a browser can actually
+blow is the **body** cap, and that one is genuinely a byte limit. Do not "align" these by
+switching to character counts — `String.length` cannot tell 3000 ASCII characters from 3000
+emoji, and the latter is several kilobytes.
+
+Change these when the server's limits change, and keep the gap.
 
 ## Sending — `src/feedback/transport.ts`
 
