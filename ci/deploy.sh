@@ -79,6 +79,18 @@ ci_log "rendered $PAGES pages"
 # extra headroom, not counted on.
 [ "$PAGES" -ge 5 ] || ci_die "only $PAGES pages rendered — expected 5+; the nav has probably lost a section"
 
+# Assert every page carries the route back to the documentation index. Added because these
+# sites sit under a shared landing page and a reader who arrives on a deep link needs a way
+# up — and because a theme override is exactly the kind of thing a Material upgrade can
+# silently stop rendering, with no error and no visible breakage on the page itself.
+#
+# Checks the COUNT, not merely presence: a partial render (the override applying to some
+# templates but not the 404 page, say) is the failure mode worth catching, and it looks
+# identical to success if you only grep one file.
+LINKED=$(grep -rl 'class="docs-up"' site --include='*.html' | wc -l)
+[ "$LINKED" = "$PAGES" ] || ci_die "only $LINKED of $PAGES pages carry the 'All documentation' link — check overrides/main.html and theme.custom_dir"
+ci_log "every page routes back to the index (correct): $LINKED/$PAGES"
+
 # The canonical must name the PUBLIC host. docs.bjornbasar.com is behind Cloudflare Access,
 # so a canonical pointing there would advertise a URL search engines can never fetch.
 grep -q 'rel="canonical" href="https://docs.twobots.dev/datvi/' site/index.html \

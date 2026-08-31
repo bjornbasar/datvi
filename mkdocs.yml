@@ -13,6 +13,9 @@ copyright: MIT licensed
 
 theme:
   name: material
+  # overrides/main.html adds a root-relative "All documentation" link to every page.
+  # Root-relative on purpose — these sites answer under two hostnames. See that file.
+  custom_dir: overrides
   palette:
     - scheme: slate
       primary: teal
