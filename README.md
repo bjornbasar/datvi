@@ -1,9 +1,10 @@
 # @twobots/game-kit
 
 Shared non-visual logic for the [`twobots.dev`](https://twobots.dev) card-game lineup —
-a seeded bot-naming pool/picker, feedback-sending primitives (byte-safe clamping, an
-offline retry queue, a send-outcome classifier), and storage primitives. Ships raw
-source; consuming apps compile it with their own TypeScript pipeline.
+a seeded bot-naming pool/picker, a bot thinking-delay picker, feedback-sending
+primitives (byte-safe clamping, an offline retry queue, a send-outcome classifier), and
+storage primitives. Ships raw source; consuming apps compile it with their own
+TypeScript pipeline.
 
 Sibling to [`@twobots/ui-theme`](https://www.npmjs.com/package/@twobots/ui-theme) (the
 visual material) — split into a second package rather than folded into that one because
@@ -21,6 +22,16 @@ feedback retry queue are not visual material.
   deterministic-replay guarantee, built on its own PRNG stream-part scheme — baking a
   specific derivation in here would make this package a second opinion about a property
   it has no way to keep honest.
+
+**`@twobots/game-kit/timing`**
+- `botThinkingDelayMs(range)` — a random delay within `[min, max]` milliseconds, so a
+  bot's turn reads as a move happening rather than resolving instantly. Independently
+  built twice already: andarta's own flat range, karu's per-persona jittered one (a
+  "decisive" opponent consistently quicker than a "deliberate" one) — both apps' own
+  doc comments call this a rendering-timing artifact with no effect on the game log or
+  replay determinism, which is why it's plain `Math.random()` rather than threading an
+  RNG state the way `pickNames` does. This package owns the jitter shape only; the
+  range itself, and whether it varies per bot, is each game's own tuning decision.
 
 **`@twobots/game-kit/feedback`**
 - `byteLength`/`clampBytes` + `MAX_NOTE_BYTES`/`MAX_CONTACT_BYTES`/`MAX_BODY_BYTES` —
@@ -72,6 +83,7 @@ exists to prevent.
 
 ```ts
 import { BEAR_NAMES, pickNames } from '@twobots/game-kit/names'
+import { botThinkingDelayMs } from '@twobots/game-kit/timing'
 import {
   byteLength,
   clampBytes,

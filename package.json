@@ -1,7 +1,7 @@
 {
   "name": "@twobots/game-kit",
-  "version": "0.2.0",
-  "description": "Shared non-visual logic for the twobots.dev card-game lineup — a seeded bot-naming pool/picker, feedback-sending primitives, and storage primitives. Ships raw source; consuming apps compile it with their own TypeScript pipeline.",
+  "version": "0.3.0",
+  "description": "Shared non-visual logic for the twobots.dev card-game lineup — a seeded bot-naming pool/picker, a bot thinking-delay picker, feedback-sending primitives, and storage primitives. Ships raw source; consuming apps compile it with their own TypeScript pipeline.",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -13,6 +13,7 @@
   ],
   "exports": {
     "./names": "./src/names/index.ts",
+    "./timing": "./src/timing/index.ts",
     "./feedback": "./src/feedback/index.ts",
     "./storage": "./src/storage/index.ts"
   },

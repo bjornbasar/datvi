@@ -1,7 +1,8 @@
 # @twobots/game-kit
 
 Shared non-visual logic for the [twobots.dev](https://twobots.dev) card-game lineup: a seeded
-bot-naming pool and picker, feedback-sending primitives, and storage primitives.
+bot-naming pool and picker, a bot thinking-delay picker, feedback-sending primitives, and storage
+primitives.
 
 ```bash
 npm install @twobots/game-kit
@@ -9,20 +10,22 @@ npm install @twobots/game-kit
 
 ```ts
 import { pickNames }         from '@twobots/game-kit/names'
+import { botThinkingDelayMs } from '@twobots/game-kit/timing'
 import { createFeedbackQueue } from '@twobots/game-kit/feedback'
 import { pickStorage }       from '@twobots/game-kit/storage'
 ```
 
-## Three entry points, no root import
+## Four entry points, no root import
 
 | Subpath | Covers | Reference |
 |---|---|---|
 | `@twobots/game-kit/names` | The bot-name pool and a pick-without-replacement helper | [names](api/names.md) |
+| `@twobots/game-kit/timing` | A jittered per-action delay, so a bot's turn reads as a move happening | [timing](api/timing.md) |
 | `@twobots/game-kit/feedback` | Byte-safe sizing, send-outcome classification, an offline retry queue | [feedback](api/feedback.md) |
 | `@twobots/game-kit/storage` | A storage that works in private browsing, and guards for what comes back out | [storage](api/storage.md) |
 
 There is deliberately **no root export**. A game that only wants two bot names should not pull a
-feedback queue into its bundle, and a barrel at the root makes that outcome the default. The three
+feedback queue into its bundle, and a barrel at the root makes that outcome the default. The four
 concerns share a package because they share a *release cadence and an owner*, not because they
 belong to one another.
 
