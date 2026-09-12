@@ -27,7 +27,31 @@ lying keeps the boundary legible to someone who arrives later.
 | Bot names | [`src/names/bearNames.ts`](src/names/bearNames.ts) | The seeded pool and its picker |
 | Feedback transport | [`src/feedback/transport.ts`](src/feedback/transport.ts), [`src/feedback/queue.ts`](src/feedback/queue.ts) | Offline retry queue, send-outcome classifier |
 | Byte safety | [`src/feedback/bytes.ts`](src/feedback/bytes.ts) | Byte-safe clamping |
+| Bot timing | [`src/timing/thinking.ts`](src/timing/thinking.ts) | A jittered per-action delay, so a bot's turn reads as a move being made |
 | Storage | [`src/storage/storage.ts`](src/storage/storage.ts) | Storage primitives |
+
+### `botThinkingDelayMs` is §0's rule applied to a feature that straddled it
+
+The entry points here were mostly obvious: a bot-name pool, a retry queue, a storage guard —
+nothing about any of them is visual, so the boundary never had to be argued.
+
+`timing` is the interesting one, because it arrived as **half of a feature whose other half is
+in [otso](../otso/CODE-TOUR.md)**. "A bot is thinking" is dots on screen plus a decision about
+how long to wait; the dots shipped as `ThinkingDots` in `@twobots/ui-theme`, and the delay
+shipped here.
+
+Apply §0's test and the split falls out immediately. Would `ui-theme` still be telling the
+truth if it owned the delay? No — a duration is not visual material, however tightly it is
+coupled to something that is. Would `game-kit` be telling the truth if it owned the dots?
+Also no. **So the feature was cut where the two names stopped agreeing about it**, which is a
+sharper demonstration of the rule than the original split was: that one responded to
+duplication that already existed, while this one had nothing to react to except the question
+of where each half belonged.
+
+Worth noticing what this costs. A consumer wanting the complete effect installs both packages
+and wires them together itself — karu and lokys each do. That is the price of a boundary drawn
+on honesty rather than convenience, and it is the right price, because the alternative decays:
+the second thing that does not fit gets added anyway, and the name becomes a label.
 
 ## 2. The naming pool, and a rule it deliberately does *not* follow
 
@@ -72,4 +96,4 @@ makes three same-animal seats funny.
 
 ---
 
-*Tour covers datvi @ `d03b224`. Companion: [README.md](README.md), [DOCS.md](DOCS.md). Sibling: [otso](../otso/CODE-TOUR.md) — the visual half.*
+*Tour covers datvi @ `94b24c3`. Companion: [README.md](README.md), [DOCS.md](DOCS.md). Sibling: [otso](../otso/CODE-TOUR.md) — the visual half.*
