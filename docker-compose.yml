@@ -1,14 +1,12 @@
-# Deploy compose — runs on Bosco (192.168.4.34, x86_64) at /data/datvi-docs.
+# Deploy compose — runs on Lumra (192.168.4.38, dongle) at /data/datvi-docs.
 # The @twobots/game-kit API reference, Ayula-fronted at BOTH:
 #   https://docs.twobots.dev/datvi/       (public)
 #   https://docs.bjornbasar.com/datvi/    (Cloudflare Access)
 #
-# NOT on Hurska, unlike every other static site here. Hurska runs thirteen containers on
-# ~500 MB free; Bosco runs three on ~3 GB. Hurska is the static tier but is the least able
-# to absorb another one, and a docs page is the safest thing to put on a WiFi host — brief
-# unreachability is not an incident, which is why the apps stay where they are.
-#
-# Bosco's ports:  5180 mishka-app · 8101 datvi-docs
+# Moved from Bosco 2026-10-23, alongside the other `*-docs` sites — Lumra now hosts every
+# doc-leaning site in the estate (otso/cookbook/paddington/homelab/karhu/datvi/wojtek-docs),
+# while Bosco takes the pure static/brochure sites instead. Port 8101 is globally reserved
+# for datvi-docs — see fleet.toml for current per-service host placement.
 services:
   datvi-docs:
     image: 192.168.4.9:5000/datvi-docs:latest

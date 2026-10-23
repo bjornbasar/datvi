@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # datvi docs local CI/CD deploy — gates the API reference against the code, renders the
 # MkDocs site, builds MULTI-ARCH, pushes the local registry (:latest + :sha- for rollback),
-# redeploys Bosco, smoke-tests.
+# redeploys Lumra, smoke-tests.
 #
 # WHAT THIS PIPELINE DOES *NOT* DO: publish the npm package. That is a release action on a
 # tag, not a docs push. It DOES run the package's own test suite, because unlike karhu (whose
@@ -13,12 +13,16 @@
 set -euo pipefail
 source "${CI_LIB:-/data/git/ci-lib.sh}"
 
-BOSCO="ubuntu@192.168.4.34"
-BOSCO_DIR="/data/datvi-docs"
+# .38 (USB-Ethernet dongle), not .37 (WiFi) -- the wifi card has a recurring PCIe
+# drop (reference_lumra_iwlwifi_pcie_drop.md) and the dongle is now the reliable
+# path. A deploy only needs ONE reachable address, unlike nginx/Prometheus which
+# got dual-path failover -- .38 alone is correct here.
+LUMRA="ubuntu@192.168.4.38"
+LUMRA_DIR="/data/datvi-docs"
 IMG="$REGISTRY/datvi-docs"
 PORT=8101
 
-ci_trap "→ Bosco (docs.twobots.dev/datvi/)"
+ci_trap "→ Lumra (docs.twobots.dev/datvi/)"
 ci_lock
 ci_ensure_buildx
 
@@ -102,10 +106,10 @@ ci_log "build + push multi-arch: $IMG (:latest + :sha-$CI_SHA)"
 docker buildx build --builder multiarch --platform linux/amd64,linux/arm64 \
   -t "$IMG:latest" -t "$IMG:sha-$CI_SHA" --push .
 
-ci_log "sync compose + redeploy on Bosco"
-ssh "$BOSCO" "mkdir -p $BOSCO_DIR"
-rsync -a docker-compose.yml "$BOSCO:$BOSCO_DIR/"
-ssh "$BOSCO" "cd $BOSCO_DIR && docker compose pull && docker compose up -d --remove-orphans && docker image prune -f"
+ci_log "sync compose + redeploy on Lumra"
+ssh "$LUMRA" "mkdir -p $LUMRA_DIR"
+rsync -a docker-compose.yml "$LUMRA:$LUMRA_DIR/"
+ssh "$LUMRA" "cd $LUMRA_DIR && docker compose pull && docker compose up -d --remove-orphans && docker image prune -f"
 
 # ---------------------------------------------------------------------- smoke tests
 # NOTE the /datvi/ prefix on every path: the site is rooted at its public path INSIDE the
@@ -113,14 +117,14 @@ ssh "$BOSCO" "cd $BOSCO_DIR && docker compose pull && docker compose up -d --rem
 # proxy. See the header of nginx.conf.
 ci_log "smoke-test the deployed container"
 for PAGE in /datvi/ /datvi/getting-started/ /datvi/api/names/ /datvi/api/feedback/ /datvi/api/storage/; do
-  CODE=$(ssh "$BOSCO" "curl -s -o /dev/null -w '%{http_code}' http://localhost:$PORT$PAGE")
+  CODE=$(ssh "$LUMRA" "curl -s -o /dev/null -w '%{http_code}' http://localhost:$PORT$PAGE")
   [ "$CODE" = "200" ] || ci_die "$PAGE returned $CODE — the site did not deploy correctly"
   ci_log "serves (correct): $PAGE → 200"
 done
 
 # Search is the classic silent mkdocs failure: the page renders, the box appears, and nothing
 # is ever found because the index 404s.
-CODE=$(ssh "$BOSCO" "curl -s -o /dev/null -w '%{http_code}' http://localhost:$PORT/datvi/search/search_index.json")
+CODE=$(ssh "$LUMRA" "curl -s -o /dev/null -w '%{http_code}' http://localhost:$PORT/datvi/search/search_index.json")
 [ "$CODE" = "200" ] || ci_die "search_index.json → HTTP $CODE — site search is broken"
 ci_log "search index resolves (correct)"
 
@@ -128,7 +132,7 @@ ci_log "search index resolves (correct)"
 # Dockerfile COPY list would publish source, tests, or the raw markdown.
 ci_log "assert the repo itself is not being served"
 for LEAK in /src/names/bearNames.ts /package.json /mkdocs.yml /Dockerfile /tools/check-docs.mjs /docs/index.md /datvi/../package.json; do
-  CODE=$(ssh "$BOSCO" "curl -s -o /dev/null -w '%{http_code}' --path-as-is http://localhost:$PORT$LEAK")
+  CODE=$(ssh "$LUMRA" "curl -s -o /dev/null -w '%{http_code}' --path-as-is http://localhost:$PORT$LEAK")
   [ "$CODE" = "404" ] || ci_die "$LEAK is being SERVED (HTTP $CODE) — check the Dockerfile COPY allowlist"
   ci_log "not served (correct): $LEAK → 404"
 done
@@ -142,7 +146,7 @@ done
 # Reads the RAW Location header on purpose: curl's %{redirect_url} resolves a relative header
 # against the request URL, so it always looks correct and can never distinguish the two cases.
 ci_log "assert the trailing-slash redirect keeps the /datvi/ prefix"
-LOC=$(ssh "$BOSCO" "curl -s -D- -o /dev/null http://localhost:$PORT/datvi/api/names | grep -i '^location:' | tr -d '\r'")
+LOC=$(ssh "$LUMRA" "curl -s -D- -o /dev/null http://localhost:$PORT/datvi/api/names | grep -i '^location:' | tr -d '\r'")
 case "$LOC" in
   *"://"*)             ci_die "the redirect is absolute ($LOC) — absolute_redirect must be off" ;;
   *"/datvi/api/names/"*) ci_log "redirect keeps the prefix (correct): '$LOC'" ;;

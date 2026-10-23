@@ -20,8 +20,9 @@ a name that says "ui-theme."
 
 `docs/` is a MkDocs Material site published at **docs.twobots.dev/datvi/** (public) and
 **docs.bjornbasar.com/datvi/** (Cloudflare Access), both served by the same `datvi-docs`
-container on **Bosco :8101**. `ci/deploy.sh` renders, builds multi-arch, deploys and
-smoke-tests it on `git push ruxa main`.
+container on **Lumra :8101** (moved from Bosco 2026-10-23, alongside the other `*-docs`
+sites). `ci/deploy.sh` renders, builds multi-arch, deploys and smoke-tests it on
+`git push ruxa main`.
 
 ### The path prefix is inside the image, not in the proxy
 
