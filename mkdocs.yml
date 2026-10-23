@@ -46,6 +46,7 @@ nav:
     - names: api/names.md
     - feedback: api/feedback.md
     - storage: api/storage.md
+    - timing: api/timing.md
 
 # Turn link and anchor problems into warnings, which `--strict` then turns into a failed
 # build. Without this, a cross-reference to a renamed heading is only an INFO message and
