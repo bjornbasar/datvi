@@ -22,7 +22,7 @@ a name that says "ui-theme."
 **docs.bjornbasar.com/datvi/** (Cloudflare Access), both served by the same `datvi-docs`
 container on **Lumra :8101** (moved from Bosco 2026-10-23, alongside the other `*-docs`
 sites). `ci/deploy.sh` renders, builds multi-arch, deploys and smoke-tests it on
-`git push ruxa main`.
+`git push den main`.
 
 ### The path prefix is inside the image, not in the proxy
 

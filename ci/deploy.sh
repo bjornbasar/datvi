@@ -9,7 +9,7 @@
 # reference describing behaviour the tests no longer support is exactly the failure this site
 # exists to prevent.
 #
-# Runs on Ruxa via `git push ruxa main` (post-receive) or by hand from the checkout.
+# Runs on Ruxa via `git push den main` (post-receive) or by hand from the checkout.
 set -euo pipefail
 source "${CI_LIB:-/data/git/ci-lib.sh}"
 
