@@ -75,13 +75,11 @@ ci_log "render the MkDocs site (build --strict)"
 rm -rf site
 ci_mkdocs build --strict
 
-[ -f site/index.html ] || ci_die "mkdocs produced no site/index.html"
-PAGES=$(find site -name '*.html' | wc -l)
-ci_log "rendered $PAGES pages"
 # A nav regression that silently dropped the API reference would otherwise deploy happily.
 # 5 = home + getting-started + three reference pages; the 404 page mkdocs-material emits is
 # extra headroom, not counted on.
-[ "$PAGES" -ge 5 ] || ci_die "only $PAGES pages rendered — expected 5+; the nav has probably lost a section"
+ci_assert_mkdocs_built 5
+ci_log "rendered $PAGES pages"
 
 # Assert every page carries the route back to the documentation index. Added because these
 # sites sit under a shared landing page and a reader who arrives on a deep link needs a way
@@ -97,8 +95,7 @@ ci_log "every page routes back to the index (correct): $LINKED/$PAGES"
 
 # The canonical must name the PUBLIC host. docs.bjornbasar.com is behind Cloudflare Access,
 # so a canonical pointing there would advertise a URL search engines can never fetch.
-grep -q 'rel="canonical" href="https://docs.twobots.dev/datvi/' site/index.html \
-  || ci_die "canonical is missing or points elsewhere — check site_url in mkdocs.yml"
+ci_assert_mkdocs_canonical "https://docs.twobots.dev/datvi/"
 ci_log "canonical names the public host (correct)"
 
 # ---------------------------------------------------------------------- build + ship
