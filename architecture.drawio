@@ -1,0 +1,49 @@
+<mxfile host="app.diagrams.net" agent="claude-code">
+  <diagram id="architecture" name="Datvi (@twobots/game-kit) Architecture">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="karu" value="karu (consumer)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="andarta" value="andarta (consumer)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="40" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lokys" value="lokys (consumer, from 1st commit)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="40" width="240" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="datvi" value="datvi package (@twobots/game-kit)" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=top;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="220" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="datvi_names" value="names: BEAR_NAMES + pickNames()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="datvi">
+          <mxGeometry x="15" y="40" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="datvi_timing" value="timing: botThinkingDelayMs()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="datvi">
+          <mxGeometry x="15" y="80" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="datvi_feedback" value="feedback: clamping + retry queue" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="datvi">
+          <mxGeometry x="15" y="120" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="datvi_storage" value="storage: usableStorage/readJSON/etc" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="datvi">
+          <mxGeometry x="15" y="160" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="datvi_docs" value="docs/ MkDocs + check-docs.mjs gate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="datvi">
+          <mxGeometry x="15" y="200" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rng" value="Seeded PRNG (RngState/shuffle):&#10;DELIBERATELY EXCLUDED - stays per-app&#10;(engine portability/determinism requirement)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="460" width="340" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="imports" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jettySize=auto;orthogonalLoop=1;dashed=1;" edge="1" parent="1" source="karu" target="datvi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="imports" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jettySize=auto;orthogonalLoop=1;dashed=1;" edge="1" parent="1" source="andarta" target="datvi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="imports" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;jettySize=auto;orthogonalLoop=1;dashed=1;" edge="1" parent="1" source="lokys" target="datvi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
