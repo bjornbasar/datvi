@@ -103,6 +103,14 @@ ci_log "build + push multi-arch: $IMG (:latest + :sha-$CI_SHA)"
 docker buildx build --builder multiarch --platform linux/amd64,linux/arm64 \
   -t "$IMG:latest" -t "$IMG:sha-$CI_SHA" --push .
 
+# Per-target-host deploy lock (homelab#13 follow-on): different hosts no longer queue
+# behind each other for this SSH/restart step — only deploys sharing THIS host do.
+# Held through the SSH-based smoke tests below too (not just the compose up itself),
+# since those also touch Lumra directly — released before the pure-public-curl checks
+# and the ghcr copy, neither of which contend for the target host.
+ci_build_unlock
+ci_deploy_lock "lumra"
+
 ci_log "sync compose + redeploy on Lumra"
 ssh "$LUMRA" "mkdir -p $LUMRA_DIR"
 rsync -a docker-compose.yml "$LUMRA:$LUMRA_DIR/"
@@ -149,6 +157,8 @@ case "$LOC" in
   *"/datvi/api/names/"*) ci_log "redirect keeps the prefix (correct): '$LOC'" ;;
   *)                   ci_die "redirect LOST the /datvi/ prefix: '$LOC' — the site must be rooted at /datvi/ in the image" ;;
 esac
+
+ci_deploy_unlock
 
 # ---------------------------------------------------------------------- public checks
 # Non-fatal by design: Cloudflare/Ayula can lag a container swap by a few seconds, and a
