@@ -2,9 +2,9 @@
 
 Shared non-visual logic for the [`twobots.dev`](https://twobots.dev) card-game lineup —
 a seeded bot-naming pool/picker, a bot thinking-delay picker, feedback-sending
-primitives (byte-safe clamping, an offline retry queue, a send-outcome classifier), and
-storage primitives. Ships raw source; consuming apps compile it with their own
-TypeScript pipeline.
+primitives (byte-safe clamping, an offline retry queue, a send-outcome classifier),
+storage primitives, and a never-purchasable lives counter. Ships raw source; consuming
+apps compile it with their own TypeScript pipeline.
 
 Sibling to [`@twobots/ui-theme`](https://www.npmjs.com/package/@twobots/ui-theme) (the
 visual material) — split into a second package rather than folded into that one because
@@ -55,6 +55,18 @@ feedback retry queue are not visual material.
 - `readJSON`/`writeJSON`/`clearKey` — try/catch-safe JSON storage, quota-safe on write
   (a failed write clears rather than leaves a partial record).
 
+**`@twobots/game-kit/lives`**
+- `LivesState`/`initialLives`/`consume`/`canConsume`/`regenerate`/`msUntilNextLife` — a
+  session limiter that regains 1 life per hour and caps at a fixed count
+  (`DEFAULT_LIVES_CAP`/`DEFAULT_REGEN_MS`), with **no refill path other than its own
+  clock** — no purchase, no ad-reward. `regenerate` credits only whole elapsed intervals
+  and advances its stored clock by exactly those intervals, never to "now," so partial
+  progress toward the next life survives every call instead of visibly resetting.
+  Honour-system by design (a device-clock timestamp, defeatable by changing the clock) —
+  acceptable because lives exist to help a willing player stop, not to gate anything paid
+  or competitive; that would need a server, which this is deliberately not. Storage and
+  UI are each app's own concern, same split as `timing`.
+
 **Out of scope, stays in each app**: any payload schema itself — the feedback
 `Report`/`ReportEnv`, a match's own `RestorableSession`/`MatchRecord` shape and its
 validators — that's inherently tied to each game's own replay/match-record format, not
@@ -92,6 +104,7 @@ import {
   sendReport,
 } from '@twobots/game-kit/feedback'
 import { deepEqual, isBag, isCount, isInt, readJSON, usableStorage, writeJSON } from '@twobots/game-kit/storage'
+import { consume, initialLives, msUntilNextLife, regenerate } from '@twobots/game-kit/lives'
 ```
 
 ## License

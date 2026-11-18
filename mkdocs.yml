@@ -1,5 +1,5 @@
 site_name: "@twobots/game-kit"
-site_description: Shared non-visual logic for the twobots.dev card-game lineup — bot naming, feedback primitives, storage primitives
+site_description: Shared non-visual logic for the twobots.dev card-game lineup — bot naming, feedback primitives, storage primitives, a lives counter
 # Served under BOTH docs.twobots.dev/datvi/ and docs.bjornbasar.com/datvi/ from the same
 # container. The canonical must be the PUBLIC one: docs.bjornbasar.com sits behind Cloudflare
 # Access, so pointing search engines there would name a URL they can never fetch.
@@ -47,6 +47,7 @@ nav:
     - feedback: api/feedback.md
     - storage: api/storage.md
     - timing: api/timing.md
+    - lives: api/lives.md
 
 # Turn link and anchor problems into warnings, which `--strict` then turns into a failed
 # build. Without this, a cross-reference to a renamed heading is only an INFO message and
